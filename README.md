@@ -1,7 +1,5 @@
 # An Automated NLP Tool to Rank Applications for Diagnostic Radiology Residency: Utility for Understanding Elements Associated with Selection for Interview
 
-# Information Extraction from Breast Cancer Pathology Reports
-
 <!-- TOC --> 
 
 - [Instruction Navigation](#an-automated-nlp-tool-to-rank-applications-for-diagnostic-radiology-residency)
@@ -26,16 +24,16 @@ We developed a web system application for users to test our proposed pipilne for
 
 <table border=1>
 <tr align='center' > 
-<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/master/imgs/web_b.png" width="500"                  title="NLP Ranking Tool"></td>         
-<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/master/imgs/web_a.png" width="500" title="NLP Ranking Tool"></td>
+<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/main/imgs/web_b.png" width="500"                  title="NLP Ranking Tool"></td>         
+<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/main/imgs/web_a.png" width="500" title="NLP Ranking Tool"></td>
 </tr>
 </table>
 
 ## Late Fusion Arquitecture and Experiment Results
 <table border=1>
 <tr align='center' > 
-<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/master/imgs/pipeline.png" width="500"        title="Late Fusion Arquitecture"></td>         
-<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/master/imgs/meta_learner.png" width="400" title="Experiment Results"></td>
+<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/main/imgs/pipeline.png" width="500"        title="Late Fusion Arquitecture"></td>         
+<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/main/imgs/meta_learner.png" width="400" title="Experiment Results"></td>
 </tr>
 </table>
 
@@ -110,7 +108,7 @@ A minimal demo app is provided for you to play with the classification model!
 
 <table border=1>
 <tr align='center' > 
-<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/master/imgs/web_b.png" width="500"                  title="NLP Ranking Tool"></td>         
+<td><img src="https://github.com/thiagosantos1/Residency_AI/blob/main/imgs/web_b.png" width="500"                  title="NLP Ranking Tool"></td>         
 </table>
 
 You can easily run your app in your default browser by running:
