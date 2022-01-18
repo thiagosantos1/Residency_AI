@@ -97,9 +97,15 @@ brew list --version libomp
 ```
 
 ### Download Models
-```bash
-python3 app/src/download_models.py
-```
+For privacy reasons, the trained model weights can only be shared upon request. 
+
+Please email me at: tpsanto@emory.edu with the following information:
+
+Name:
+
+Afiliation:
+
+How are you intending to use the tool (Research or Comercial?):
 
 
 ## Demo app
