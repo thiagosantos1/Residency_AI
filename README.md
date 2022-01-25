@@ -111,6 +111,8 @@ How are you intending to use the tool (Research or Comercial?):
 ## Training Pipeline
 We also provide the code for all individual branch training as well as the Meta-Learner. You can find the code inside of folder src/training.
 
+
+#### BERT Classifier
 Example Script for training BERT Classifier
 
 ```shell
@@ -139,7 +141,7 @@ python3 main.py --path_train "train.csv" --path_test "test.csv" --execution trai
 |path_test   | path_test                   |
 
 
-
+#### Branch Classifier
 Example Script for training each branch 
 ```shell
 cd src/training/Classifiers
@@ -157,6 +159,7 @@ python3 main.py --path_train "train.csv" --path_test "test.csv" --execution trai
 |path_test   | path_test                   |
 
 
+#### Meta-Learner Classifier
 Example Script for training meta-learner
 ```shell
 cd src/training/Meta-Learner
