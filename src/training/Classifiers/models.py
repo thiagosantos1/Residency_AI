@@ -56,7 +56,6 @@ from xgboost import XGBClassifier
 import seaborn as sns
 
 
-
 def text_cleaning(data, steam=False, lemma = True, clean=True,min_lenght=2):
   words_sentences = []
   sentences = []
@@ -173,7 +172,7 @@ def pre_process(data_,seed=0):
   data_discrete = data.copy()
 
 
-  data_discrete.drop(['name','PS','interview','Medical_Education','Education','Awards',
+  data_discrete.drop(['name','PS','interview','Medical_Education','Education','Awards', 'Unnamed: 0', 'Unnamed',
                             'Certification_Licensure','Publications','Page2'],axis = 1, inplace=True,errors='ignore')
 
   # Education
@@ -470,6 +469,9 @@ if __name__ == '__main__':
         classifier = GradientBoostingClassifier(n_estimators=1000, learning_rate=0.001, random_state=seed)
 
 
+      results_out_  = results_out + "/performance.txt"
+      output_model_ = output_model + "/model_" + str(model_type) + ".pkl"
+
       if step =='train':
         # make sure path is created if it doesn't exist
         Path(output_model).mkdir(parents=True, exist_ok=True)
@@ -477,34 +479,27 @@ if __name__ == '__main__':
 
       if step =='test':
         classifier = joblib.load(output_model_)
-    
-        run_type = 'test'
-      else:
-        run_type = 'train'
-
 
       # make data
       if run =='personal_statement':
         
-        X_train,X_test = tf_idf(ps_train, ps_test, save=output_model+"/tfidf_vectorizer.pkl")
+        X_train,X_test = tf_idf(ps_train, ps_test, save=output_model+"/vectorizer.pkl")
       elif run =='discrete_feat':           # OneHotEncoder(sparse=False)
         
-        X_train,X_test = categorical_inputs(OrdinalEncoder(), data_discrete_train, data_discrete_test,save=output_model+"/categorical_vectorizer.pkl")
+        X_train,X_test = categorical_inputs(OrdinalEncoder(), data_discrete_train, data_discrete_test,save=output_model+"/vectorizer.pkl")
       elif run =='education':
-        X_train,X_test = tf_idf(data_education_train, data_education_test,save=output_model+"/tfidf_vectorizer.pkl")
+        X_train,X_test = tf_idf(data_education_train, data_education_test,save=output_model+"/vectorizer.pkl")
       elif run =='med_education':
-        X_train,X_test = tf_idf(data_med_education_train, data_med_education_test,save=output_model+"/tfidf_vectorizer.pkl")
+        X_train,X_test = tf_idf(data_med_education_train, data_med_education_test,save=output_model+"/vectorizer.pkl")
       else:
-        X_train,X_test = tf_idf(data_awards_train, data_awards_test,save=output_model+"/tfidf_vectorizer.pkl")
+        X_train,X_test = tf_idf(data_awards_train, data_awards_test,save=output_model+"/vectorizer.pkl")
 
       # run model
       logging.info("Runing Program for: ",run)
-      results_out_  = results_out + "/performance.txt"
-      output_model_ = output_model + "/model_" + str(model_type) + ".pkl"
+      
       run_model(classifier,X_train, X_test,y_train, y_test,y_train_years, y_test_years,
                  run=step, test_index = index_test,output_model=output_model_, results_out=results_out_)
     
-
     
 
 

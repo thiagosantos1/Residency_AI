@@ -108,6 +108,85 @@ Afiliation:
 How are you intending to use the tool (Research or Comercial?):
 
 
+## Training Pipeline
+We also provide the code for all individual branch training as well as the Meta-Learner. You can find the code inside of folder src/training.
+
+Example Script for training BERT Classifier
+
+```shell
+cd src/training/BERT
+
+python3 main.py --path_train "train.csv" --path_test "test.csv" --execution train --model_type "bio_clinicalbert" --n_epocs 6
+```
+
+|Input Option|Available Options            |
+|------------|-----------------------------|
+|execution   | train, test                 |
+|do_stopwords| True, False                 |
+|cuda        | True False                  |
+|model_type  | bert, roberta, distilbert,distilroberta,electra, biobert, bio_clinicalbert, biomednlp|
+|seed        | int                         |
+|n_epocs     | int                         |
+|n_batches   | int                         |
+|save_steps  | int                         |
+|evaluate_during_training_steps| int                         |
+|max_seq_length| int                         |
+|early_stopping_patience| int                         |
+|l_rate      | float                       |
+|decay       | float                       |
+|early_stopping_delta| float                       |
+|path_train  | path_train                  |
+|path_test   | path_test                   |
+
+
+
+Example Script for training each branch 
+```shell
+cd src/training/Classifiers
+
+python3 main.py --path_train "train.csv" --path_test "test.csv" --execution train --model_type xgbost --data_type education
+```
+
+|Input Option|Available Options            |
+|------------|-----------------------------|
+|execution   | train, test                 |
+|model_type  | logistic, sgb, rf, xgbost, knn, gb|
+|data_type        | personal_statement, discrete_feat, education, med_education, award, all |
+|seed        | int                         |
+|path_train  | path_train                  |
+|path_test   | path_test                   |
+
+
+Example Script for training meta-learner
+```shell
+cd src/training/Meta-Learner
+
+python3 main.py --path_train "train.csv" --path_test "test.csv" --execution train --path_bert_model "path_to_bert" --path_award_model "path_to_award" ....
+```
+
+|Input Option|Available Options            |
+|------------|-----------------------------|
+|execution   | train, test                 |
+|model_type  | logistic, sgb, rf, xgbost, knn, gb|
+|seed        | int                         |
+|path_bert_model  | path_bert_model                  |
+|path_discrete_feat_model  | path_discrete_feat_model                  |
+|path_education_model  | path_education_model                  |
+|path_med_education_model  | path_med_education_model                  |
+|path_award_model  | path_award_model                  |
+|path_train  | path_train                  |
+|path_test   | path_test                   |
+
+### Data Format 
+In order to train the pipeline on your own data, please follow the data input format provided in the examples inside the folder training/example_data. Format should be as follow:
+
+|interview|PS                           |gender|self_identification                          |Misdemeanor|Felony|Authorized_to_Work|Medical_Education|Education|Awards   |Certification_Licensure|Publications|Publications_Count|year|
+|---------|-----------------------------|------|---------------------------------------------|-----------|------|------------------|-----------------|---------|---------|-----------------------|------------|------------------|----|
+|1        |Free Text                    |Female|  White                                      | No        | No   |No                |Free Text        |Free Text|Free Text|Free Text              |Free Text   |1                 |2016|
+|1        |Free Text                    |Male  |  Asian                                      | No        | No   |Yes               |Free Text        |Free Text|Free Text|Free Text              |Free Text   |5                 |2019|
+|0        |Free Text                    |Male  |  Asian                                      | No        | No   |Yes               |Free Text        |Free Text|Free Text|Free Text              |Free Text   |0                 |2018|
+
+
 ## Demo app
 
 A minimal demo app is provided for you to play with the classification model!
