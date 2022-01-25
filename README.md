@@ -183,7 +183,7 @@ python3 main.py --path_train "train.csv" --path_test "test.csv" --execution trai
 |path_test   | path_test                   |
 
 ### Data Format 
-In order to train the pipeline on your own data, please follow the data input format provided in the examples inside the folder training/example_data. Format should be as follow:
+In order to train the pipeline on your own data, please follow the data input format provided in the examples inside folder training/example_data. Format should be as follow:
 
 |interview|PS                           |gender|self_identification                          |Misdemeanor|Felony|Authorized_to_Work|Medical_Education|Education|Awards   |Certification_Licensure|Publications|Publications_Count|year|
 |---------|-----------------------------|------|---------------------------------------------|-----------|------|------------------|-----------------|---------|---------|-----------------------|------------|------------------|----|
