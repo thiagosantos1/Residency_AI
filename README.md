@@ -48,15 +48,44 @@ If you do not already have `conda` installed, you can install Miniconda from [th
 conda update -n base -c defaults conda
 ```
 
+### Using YML Conda file 
 And create a conda environment from the yml file (~220Mb):
 ```bash
 conda env create -f environment.yml
 ```
 
 If not already activated, activate the new conda environment using:
-
 ```bash
 conda activate nlp_ranking
+```
+
+### Using pip directly
+
+create a fresh conda environment (~220Mb):
+
+```bash
+conda create python=3.8 --name=nlp_ranking
+```
+
+If not already activated, activate the new conda environment using:
+```bash
+conda activate nlp_ranking
+```
+
+Then install the following packages (~3Gb):
+
+```bash
+conda install pytorch cudatoolkit=10.2 -c pytorch
+```
+
+```bash
+conda install pytorch torchvision torchaudio -c pytorch
+```
+
+Then Install All Dependencies with pip:
+
+```bash
+pip3 install -r requirements.txt
 ```
 
 ### Mac Users - Install libomp 11.0
