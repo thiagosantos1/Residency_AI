@@ -159,7 +159,7 @@ Example Script for training each branch
 ```shell
 cd src/training/Classifiers
 
-python3 main.py --path_train "train.csv" --path_test "test.csv" --execution train --model_type xgbost --data_type education
+python3 models.py --path_train "train.csv" --path_test "test.csv" --execution train --model_type xgbost --data_type education
 ```
 
 |Input Option|Available Options            |
@@ -219,6 +219,9 @@ You can easily run your app in your default browser by running:
 cd src
 python3 app.py >/dev/null 2>&1
 ```
+
+Then open your browser and type: http://127.0.0.1:5000/
+
 
 ## Contributors
 

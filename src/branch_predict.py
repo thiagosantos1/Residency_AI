@@ -278,3 +278,6 @@ def metaLeaner_prediction(input_data,save_plot=True):
         plt.close()
         
     return result[0]
+
+if __name__ == '__main__':
+    pass

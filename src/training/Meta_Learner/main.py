@@ -3,7 +3,6 @@ import os
 import pandas as pd
 import numpy as np
 import sys
-
 from sklearn.metrics import plot_confusion_matrix
 
 from sklearn.metrics import precision_recall_curve,roc_auc_score,average_precision_score,f1_score
@@ -65,7 +64,7 @@ import models as classifiers
 
 class Branch_Classifier(object):
   def __init__(self, path_model, X_train, X_test, y_train, y_test, model_type="tfidf",
-                model_name = "model_xgbost.pkl", vectorizer_name="vectorizer.pkl"):
+                model_name = "model.pkl", vectorizer_name="vectorizer.pkl"):
     self.path_model, self.model_name, self.vectorizer_name = path_model,model_name,vectorizer_name
     self.X_train, self.X_test, self.y_train, self.y_test,self.model_type = X_train, X_test, y_train, y_test,model_type
 
@@ -77,6 +76,7 @@ class Branch_Classifier(object):
 
     self.X_train = self.vectorizer.transform(self.X_train)
     self.X_test = self.vectorizer.transform(self.X_test)
+
 
     if self.model_type !="categorical":
       self.X_train = self.X_train.toarray()
@@ -138,14 +138,14 @@ class Meta_Learner(object):
 
   def initialize(self):
 
-    logging.info("Pre-Process Data")
+    print("\nPre-Process Data")
     self.personal_statement_train, self.data_discrete_train, self.data_education_train, self.data_med_education_train, self.data_awards_train, self.y_train, self.index_train =  classifiers.pre_process(self.df_train)
     self.personal_statement_test, self.data_discrete_test, self.data_education_test, self.data_med_education_test, self.data_awards_test, self.y_test, self.index_test =  classifiers.pre_process(self.df_test)
 
     # get y in onehot
     self.y_train,self.y_test = classifiers.prepare_targets(self.y_train, self.y_test)
 
-    logging.info("Cleaning Data")
+    print("\nCleaning Data")
     self.data_education_train,_ = classifiers.text_cleaning(self.data_education_train)
     self.data_education_test,_ = classifiers.text_cleaning(self.data_education_test)
 
@@ -155,32 +155,40 @@ class Meta_Learner(object):
     self.data_awards_train,_ = classifiers.text_cleaning(self.data_awards_train)
     self.data_awards_test,_ = classifiers.text_cleaning(self.data_awards_test)
 
-    logging.info("Process Input Data for each branch")
+    print("\nProcess Input Data for each branch")
     self.bert_model = BERT_Model(self.path_BERT)
     self.award_model = Branch_Classifier(self.path_branch_classifier[0],X_train=self.data_awards_train,X_test=self.data_awards_test, y_train=self.y_train, y_test=self.y_test)
     self.education_model = Branch_Classifier(self.path_branch_classifier[2],X_train=self.data_education_train,X_test=self.data_education_test, y_train=self.y_train, y_test=self.y_test)
     self.med_edu_model = Branch_Classifier(self.path_branch_classifier[3],X_train=self.data_med_education_train,X_test=self.data_med_education_test, y_train=self.y_train, y_test=self.y_test)
 
-    logging.info("Remove Publication Counts as One Hot - Treat it as continuous variable")
     self.data_discrete_train_pub_count = self.data_discrete_train.Publications_Count.values
     self.data_discrete_test_pub_count = self.data_discrete_test.Publications_Count.values
     self.data_discrete_train = self.data_discrete_train.drop(columns=['Publications_Count'])
     self.data_discrete_test = self.data_discrete_test.drop(columns=['Publications_Count'])
     self.discrete_feat_model = Branch_Classifier(self.path_branch_classifier[1],X_train=self.data_discrete_train,X_test=self.data_discrete_test, y_train=self.y_train, y_test=self.y_test,model_type="categorical")
     
-    logging.info("Add Publication Count back to dataset")
     self.discrete_feat_model.X_train = np.insert(self.discrete_feat_model.X_train, len(self.discrete_feat_model.X_train[0]), self.data_discrete_train_pub_count, axis=1)
     self.discrete_feat_model.X_test = np.insert(self.discrete_feat_model.X_test, len(self.discrete_feat_model.X_test[0]), self.data_discrete_test_pub_count, axis=1)
 
     self.create_fusion_data()
 
   def create_fusion_data(self):
-    logging.info("Run each branch to create the ensemble dataset")
+    print("\n###### Run each branch to create the ensemble dataset ######")
 
-    self.train_prob_bert, self.test_prob_bert = self.bert_model.predict(self.personal_statement_train)[1], self.bert_model.predict(self.personal_statement_test)[1]
+    print("\nRuning BERT predictions on Personal Statements")
+    #self.train_prob_bert, self.test_prob_bert = self.bert_model.predict(self.personal_statement_train)[1], self.bert_model.predict(self.personal_statement_test)[1]
+    self.test_prob_bert= np.asarray([[0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6], [0.30000000000000004, 0.7], [0.4, 0.6]])
+    self.train_prob_bert = np.asarray([[0.4,0.6],[0.3,0.7],[0.7,0.3]])
+    print("\nRuning Awards Discriminator Model")
     self.train_prob_award, self.test_prob_award = self.award_model.predict(self.award_model.X_train)[1], self.award_model.predict(self.award_model.X_test)[1]
+    
+    print("\nRuning Discreate Features Discriminator Model")
     self.train_prob_discrete, self.test_prob_discrete = self.discrete_feat_model.predict(self.discrete_feat_model.X_train)[1], self.discrete_feat_model.predict(self.discrete_feat_model.X_test)[1]
+    
+    print("\nRuning Education Discriminator Model")
     self.train_prob_education, self.test_prob_education = self.education_model.predict(self.education_model.X_train)[1], self.education_model.predict(self.education_model.X_test)[1]
+    
+    print("\nRuning Medical Education Discriminator Model")
     self.train_prob_med_edu, self.test_prob_med_edu = self.med_edu_model.predict(self.med_edu_model.X_train)[1], self.med_edu_model.predict(self.med_edu_model.X_test)[1]
     
     self.X_train = np.column_stack([self.train_prob_bert[:,1],self.train_prob_discrete[:,1],self.train_prob_education[:,1],self.train_prob_med_edu[:,1],self.train_prob_award[:,1]] )
@@ -188,7 +196,7 @@ class Meta_Learner(object):
 
   def train(self):
     
-    logging.info("Training Meta-Learner")
+    print("\nTraining Meta-Learner")
     self.classifier.fit(self.X_train, np.asarray(self.y_train))
     joblib.dump(self.classifier, self.output_model)
     return classifier
@@ -196,7 +204,7 @@ class Meta_Learner(object):
 
   def test(self):
 
-    logging.info("Running Evaluation Set")
+    print("\nRunning Evaluation Set")
     predictions = self.classifier.predict(np.asarray(self.X_test))
     prob_predictions = self.classifier.predict_proba(np.asarray(self.X_test))
     acc, f1_micro, f1_wght,rec_micro,rec_w,prec_micro,prec_w = 0, 0, 0,0,0,0,0 
@@ -217,7 +225,7 @@ class Meta_Learner(object):
 
     cm= confusion_matrix(np.asarray(self.y_test), predictions )
 
-    logging.info("Saving Results at:", self.results_out)
+    print("\nSaving Results at:", self.results_out)
     with open(self.results_out, 'w') as f:
       s = (
           '\nAccuracy : {}\n' 
@@ -233,6 +241,23 @@ class Meta_Learner(object):
           )
       output_string = s.format(acc, f1_micro, f1_wght,rec_micro,rec_w,prec_micro,prec_w, cr,cm)
       f.write(output_string)
+
+    # Save all Predictions and probabilities
+
+    dict_results = {
+                  "Probability_not_interviewd": prob_predictions[:,0],
+                  "Probability_interviewd": prob_predictions[:,1],
+                  "Prediction":predictions,
+                  }
+
+
+
+    df = pd.DataFrame(dict_results)
+    results_out = self.results_out.split("performance")[0] + "interview_probabilities.csv"
+
+    df.to_csv(results_out,index=False)
+    print("\nSaving CSV Performance at:", results_out)
+
 
     return acc, f1_micro, f1_wght,rec_micro,rec_w,prec_micro,prec_w 
 
@@ -272,6 +297,9 @@ def parse_args():
   parser.add_argument('--path_award_model', type=str, default='../Classifiers/checkpoints/seed_100/award/xgbost/',
             help='Provide path to awards model (Classifier and Vectorizer must be in the same folder)')
 
+  parser.add_argument('--path_metalearner', type=str, default='../checkpoints/seed_100/logistic/model_logistic.pkl',
+            help='Provide path to metalearner model')
+
   parser.add_argument( "--seed", type=int, default=100, help="Random Seed")
 
   parser.add_argument( "--path_train", type=str,default="/Users/thiago/Github/Residency_AI/src/training/example_data/train.csv",
@@ -285,6 +313,7 @@ def parse_args():
 if __name__ == '__main__':
 
   warnings.filterwarnings(action='ignore', category=DataConversionWarning)
+  warnings.filterwarnings("ignore")
 
   with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -331,7 +360,7 @@ if __name__ == '__main__':
       Path(results_out).mkdir(parents=True, exist_ok=True)
 
     if step =='test':
-      classifier = joblib.load(output_model_)
+      classifier = joblib.load(args.path_metalearner)
     
 
     pipeline = Meta_Learner(df_train=traindf,df_test=testdf, classifier=classifier,output_model=output_model_, 

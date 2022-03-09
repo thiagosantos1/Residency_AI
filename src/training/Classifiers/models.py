@@ -175,6 +175,10 @@ def pre_process(data_,seed=0):
   data_discrete.drop(['name','PS','interview','Medical_Education','Education','Awards', 'Unnamed: 0', 'Unnamed',
                             'Certification_Licensure','Publications','Page2'],axis = 1, inplace=True,errors='ignore')
 
+  data_discrete.drop(data_discrete.columns[data_discrete.columns.str.contains('unnamed',case = False)],axis = 1, errors='ignore',inplace = True)
+  data_discrete.drop(data_discrete.columns[data_discrete.columns.str.contains('Unnamed',case = False)],axis = 1, errors='ignore',inplace = True)
+  
+
   # Education
   data[['Education']] = data['Education'].fillna('no_identified')
   data_education = data.Education.str.lower().values
@@ -223,6 +227,7 @@ def categorical_inputs(encoding,X_train, X_test,save="categorical_vectorizer.pkl
   X_test_enc = np.insert(X_test_enc, len(X_test_enc[0]), X_v_pub, axis=1)
   
   X_train_enc = np.insert(X_train_enc, len(X_train_enc[0]), X_t_pub, axis=1)
+
   
   joblib.dump(encoding, save)
 
@@ -441,7 +446,7 @@ if __name__ == '__main__':
     y_train,y_test = prepare_targets(y_train, y_test)
 
     # compute class weights
-    class_wghts = compute_class_weight('balanced',np.unique(y_train),y_train).tolist()
+    class_wghts = compute_class_weight(class_weight='balanced',classes=np.unique(y_train),y=y_train).tolist()
 
     # configure for each type of run
     if data_type == 'all':
@@ -486,7 +491,8 @@ if __name__ == '__main__':
         X_train,X_test = tf_idf(ps_train, ps_test, save=output_model+"/vectorizer.pkl")
       elif run =='discrete_feat':           # OneHotEncoder(sparse=False)
         
-        X_train,X_test = categorical_inputs(OrdinalEncoder(), data_discrete_train, data_discrete_test,save=output_model+"/vectorizer.pkl")
+        X_train,X_test = categorical_inputs(OrdinalEncoder(handle_unknown='use_encoded_value',unknown_value=np.nan), data_discrete_train, data_discrete_test,save=output_model+"/vectorizer.pkl")
+
       elif run =='education':
         X_train,X_test = tf_idf(data_education_train, data_education_test,save=output_model+"/vectorizer.pkl")
       elif run =='med_education':
